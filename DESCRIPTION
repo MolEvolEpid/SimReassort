@@ -1,0 +1,26 @@
+Package: SimReassort
+Type: Package
+Title: Genealogy Simulation with Reassortment for Two-Segment Viruses
+Version: 0.1.0
+Date: 2024-04-15
+Authors@R: c(person(given=c("Qianying"),family="Lin",
+		role=c("aut","cre"),email="qianying@lanl.gov"),
+Description: Simulations for transmission dynamics and viral evolution.
+Depends: R(>= 4.1.0)
+Imports: ggtree, ggplot2, ape, dplyr, tibble, foreach, tidyr, pomp, cowplot, scales, alpha, stringr
+License: GPL-3
+LazyData: true
+Contact: qianying at lanl dot gov
+Encoding: UTF-8
+RoxygenNote: 7.3.0
+Collate: 
+    'package.R'
+    'aaa.R'
+    'foreach.R'
+    'getinfo.R'
+    'lbdpwr.R'
+    'plot.R'
+    'lineages.R'
+    'pomp.R'
+    'print.R'
+    'simulate.R'
