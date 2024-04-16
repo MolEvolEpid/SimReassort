@@ -17,3 +17,11 @@ Code from Lin et al "The number and pattern of viral genomic reassortments are n
 
 -   `data`: contains simulated data
 
+## Installation
+
+A list of packages are required: `ggtree`, `ggplot2`, `ape`, `dplyr`, `tibble`, `foreach`, `doParallel`, `tidyr`, `pomp`, `cowplot`, `scales`, and `stringr`.
+
+``` r
+install.packages("devtools")
+devtools::install_github("MolEvolEpid/SimReassort")
+```
