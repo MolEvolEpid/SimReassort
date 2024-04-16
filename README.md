@@ -5,5 +5,15 @@ Code from Lin et al "The number and pattern of viral genomic reassortments are n
 
 **SimReassort** simulates transmission dynamics and the genealogical evolutions for two-segment viruses, using a linear-birth-death model structure.
 
+## Directory structure
 
+-   `R`: contains `R` codes for simulating and ploting genealogies, dismissing invisible reassortments, and computing the remove-and-rejoin table
+
+-   `examples`: contains examples for simulating genealogies and computing remove-and-rejoin table
+
+-   `src`: contains `C/C++` codes modified from package `phylopomp`
+
+-   `man`: contains manuals for available functions
+
+-   `data`: contains simulated data
 
