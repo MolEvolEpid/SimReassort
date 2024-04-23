@@ -437,27 +437,6 @@ public:
     x->slate = t;
     add(x,a);
   };
-  //! Link two green nodes and produce a graph
-  void reassort_graph (ball_t *a, ball_t *b, slate_t t) {
-    if ((!a->is(black)))
-      err("in '%s': inconceivable! (1st color: %s)",__func__,colores[a->color]); // #nocov
-    if ((!b->is(black)))
-      err("in '%s': inconceivable! (1st color: %s)",__func__,colores[b->color]); // #nocov
-    time() = t;
-    node_t *x = make_node(lightorange,a->deme());
-    x->slate = t;
-    add(x,a);
-    // make a new node with new green and darkorange ball
-    // with the same name of x
-    // check_genealogy_size(0);
-    node_t *y = new node_t(x->uniq,t,b->deme());
-    ball_t *gy = new ball_t(y,x->uniq,green,b->deme());
-    ball_t *by = new ball_t(y,x->uniq,darkorange,b->deme());
-    y->green_ball() = gy;
-    y->insert(gy);
-    y->insert(by);
-    add(y,b);
-  };
   //! set up for extraction of black balls
   //! (see 'inventory.h')
   std::pair<node_it, node_it> extant (void) const {
