@@ -17,6 +17,8 @@ Code from Lin et al., "The number and pattern of viral genomic reassortments are
 
 -   `data`: contains simulated data
 
+-   `scripts`: contains scripts to simulate transmission processes with reassortments and use CoalRe and TreeKnit for inference
+
 ## Installation
 
 A list of packages are required: `ggtree`, `ggplot2`, `ape`, `dplyr`, `tibble`, `foreach`, `doParallel`, `tidyr`, `pomp`, `cowplot`, `scales`, and `stringr`.
