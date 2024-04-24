@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast beautitemplate="Standard" beautistatus="" namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+  <data id="tre1" spec="Alignment" name="alignment">
+  </data>
+  <data id="tre2" spec="Alignment" name="alignment">
+  </data>
+  <map name="Uniform">beast.math.distributions.Uniform</map>
+  <map name="Exponential">beast.math.distributions.Exponential</map>
+  <map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
+  <map name="Normal">beast.math.distributions.Normal</map>
+  <map name="Beta">beast.math.distributions.Beta</map>
+  <map name="Gamma">beast.math.distributions.Gamma</map>
+  <map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
+  <map name="prior">beast.math.distributions.Prior</map>
+  <map name="InverseGamma">beast.math.distributions.InverseGamma</map>
+  <map name="OneOnX">beast.math.distributions.OneOnX</map>
+  <run id="mcmc" spec="MCMC" chainLength="5000000">
+    <state id="state" spec="State" storeEvery="5000">
+      <tree id="Tree.t:tre2" spec="beast.evolution.tree.Tree" name="stateNode">
+        <trait id="dateTrait.t:tre2" spec="beast.evolution.tree.TraitSet" traitname="date" value="">
+          <taxa id="TaxonSet.tre2" spec="TaxonSet">
+            <alignment idref="tre2"/>
+          </taxa>
+        </trait>
+        <taxonset idref="TaxonSet.tre2"/>
+      </tree>
+      <tree id="Tree.t:tre1" spec="beast.evolution.tree.Tree" name="stateNode">
+        <trait id="dateTrait.t:tre1" spec="beast.evolution.tree.TraitSet" traitname="date" value="">
+          <taxa id="TaxonSet.tre1" spec="TaxonSet">
+            <alignment idref="tre1"/>
+          </taxa>
+        </trait>
+        <taxonset idref="TaxonSet.tre1"/>
+      </tree>
+      <parameter id="clockRate.c:tre2" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+      <parameter id="reassortmentRateCwR.alltrees" spec="parameter.RealParameter" name="stateNode">0.1</parameter>
+      <parameter id="popSizeCwR.alltrees" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+      <stateNode id="networkCwR.alltrees" spec="coalre.simulator.SimulatedCoalescentNetwork" enableSegmentTreeUpdate="false" nSegments="2" traitSet="@dateTrait.t:tre2">
+        <parameter id="RealParameter.2" spec="parameter.RealParameter" name="reassortmentRate">0.0</parameter>
+        <populationModel id="ConstantPopulation.0" spec="ConstantPopulation">
+          <parameter id="RealParameter.3" spec="parameter.RealParameter" name="popSize">1.0</parameter>
+        </populationModel>
+        <taxonSet id="TaxonSet.2" spec="TaxonSet" alignment="@tre1"/>
+      </stateNode>
+    </state>
+    <init id="segmentTreeInitializerCwR.t:tre1" spec="coalre.network.SegmentTreeInitializer" network="@networkCwR.alltrees" segmentIndex="1">
+      <segmentTree idref="Tree.t:tre1"/>
+    </init>
+    <init id="segmentTreeInitializerCwR.t:tre2" spec="coalre.network.SegmentTreeInitializer" network="@networkCwR.alltrees" segmentIndex="0">
+      <segmentTree idref="Tree.t:tre2"/>
+    </init>
+    <distribution id="posterior" spec="util.CompoundDistribution">
+      <distribution id="prior" spec="util.CompoundDistribution">
+        <distribution id="CoalescentWithReassortmentDummy.t:tre1" spec="coalre.util.DummyTreeDistribution" tree="@Tree.t:tre1"/>
+        <distribution id="CoalescentWithReassortmentDummy.t:tre2" spec="coalre.util.DummyTreeDistribution" tree="@Tree.t:tre2"/>
+        <distribution id="CoalescentWithReassortmentPrior.alltrees" spec="coalre.distribution.CoalescentWithReassortment" reassortmentRate="@reassortmentRateCwR.alltrees">
+          <populationModel id="constantPopSizeCwR.alltrees" spec="ConstantPopulation" popSize="@popSizeCwR.alltrees"/>
+          <networkIntervals id="networkIntervalsCwR.alltrees" spec="coalre.distribution.NetworkIntervals" network="@networkCwR.alltrees">
+            <parameter id="binomialProbCwR.alltrees" spec="parameter.RealParameter" estimate="false" lower="0.0" name="binomialProb" upper="1.0">0.5</parameter>
+          </networkIntervals>
+        </distribution>
+        <prior id="ClockPrior.c:tre2" name="distribution" x="@clockRate.c:tre2">
+	  <Normal id="Normal.0" name="distr">
+            <parameter id="RealParameter.5" spec="parameter.RealParameter" estimate="false" name="mean">0.005</parameter>
+            <parameter id="RealParameter.6" spec="parameter.RealParameter" estimate="false" name="sigma">1.0E-4</parameter>
+          </Normal>
+	</prior>
+        <prior id="popSizeCwRPrior.alltrees" name="distribution" x="@popSizeCwR.alltrees">
+          <OneOnX id="OneOnX.2" name="distr"/>
+        </prior>
+        <prior id="reassortmentRateCwRPrior.alltrees" name="distribution" x="@reassortmentRateCwR.alltrees">
+          <Exponential id="Exponential.2" name="distr">
+            <parameter id="RealParameter.4" spec="parameter.RealParameter" estimate="false" name="mean">1.0</parameter>
+          </Exponential>
+        </prior>
+      </distribution>
+      <distribution id="likelihood" spec="util.CompoundDistribution" useThreads="true">
+        <distribution id="treeLikelihood.tre2" spec="ThreadedTreeLikelihood" data="@tre2" tree="@Tree.t:tre2">
+          <siteModel id="SiteModel.s:tre2" spec="SiteModel">
+            <parameter id="mutationRate.s:tre2" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
+            <parameter id="gammaShape.s:tre2" spec="parameter.RealParameter" estimate="false" name="shape">1.0</parameter>
+            <parameter id="proportionInvariant.s:tre2" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
+            <substModel id="JC69.s:tre2" spec="JukesCantor"/>
+          </siteModel>
+          <branchRateModel id="StrictClock.c:tre2" spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c:tre2"/>
+        </distribution>
+        <distribution id="treeLikelihood.tre1" spec="ThreadedTreeLikelihood" branchRateModel="@StrictClock.c:tre2" data="@tre1" siteModel="@SiteModel.s:tre2" tree="@Tree.t:tre1"/>
+      </distribution>
+    </distribution>
+    <operator id="StrictClockRateScaler.c:tre2" spec="ScaleOperator" parameter="@clockRate.c:tre2" weight="3.0"/>
+    <operator id="strictClockUpDownOperator.c:tre2" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
+      <up idref="clockRate.c:tre2"/>
+    </operator>
+    <operator id="reassortmentRateCwRScale.alltrees" spec="ScaleOperator" parameter="@reassortmentRateCwR.alltrees" scaleFactor="0.5" weight="1.0"/>
+    <operator id="popSizeCwRScale.alltrees" spec="ScaleOperator" parameter="@popSizeCwR.alltrees" scaleFactor="0.5" weight="1.0"/>
+    <operator id="addRemoveReassortmentCwR.alltrees" spec="coalre.operators.AddRemoveReassortment" alpha="1.0" network="@networkCwR.alltrees" weight="30.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="divertSegmentCwR.alltrees" spec="coalre.operators.DivertSegmentOperator" network="@networkCwR.alltrees" weight="5.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="uniformNetworkCwR.alltrees" spec="coalre.operators.UniformNetworkNodeHeightOperator" network="@networkCwR.alltrees" weight="5.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="networkWideExchangeCwR.alltrees" spec="coalre.operators.NetworkExchange" isNarrow="false" network="@networkCwR.alltrees" weight="5.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="networkNarrowExchangeCwR.alltrees" spec="coalre.operators.NetworkExchange" network="@networkCwR.alltrees" weight="15.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="subNetworkSlideCwR.alltrees" spec="coalre.operators.SubNetworkSlide" network="@networkCwR.alltrees" weight="30.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="networkGibbsCwR.alltrees" spec="coalre.operators.GibbsOperatorAboveSegmentRoots" network="@networkCwR.alltrees" populationModel="@constantPopSizeCwR.alltrees" reassortmentRate="@reassortmentRateCwR.alltrees" weight="5.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="networkScaleCwR.alltrees" spec="coalre.operators.NetworkScaleOperator" network="@networkCwR.alltrees" weight="3.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="networkScaleRootCwR.alltrees" spec="coalre.operators.NetworkScaleOperator" network="@networkCwR.alltrees" scaleRootOnly="true" weight="3.0">
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <operator id="networkUpDownCwR.alltrees" spec="coalre.operators.NetworkScaleOperator" network="@networkCwR.alltrees" weight="3.0">
+      <upParameter idref="popSizeCwR.alltrees"/>
+      <downParameter idref="reassortmentRateCwR.alltrees"/>
+      <downParameter idref="clockRate.c:tre2"/>
+      <segmentTree idref="Tree.t:tre1"/>
+      <segmentTree idref="Tree.t:tre2"/>
+    </operator>
+    <logger id="tracelog" spec="Logger" fileName="tre2.log" logEvery="1000" model="@posterior" sanitiseHeaders="true" sort="smart">
+      <log idref="posterior"/>
+      <log idref="likelihood"/>
+      <log idref="prior"/>
+      <log idref="treeLikelihood.tre2"/>
+      <log id="TreeHeight.t:tre2" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:tre2"/>
+      <log idref="treeLikelihood.tre1"/>
+      <log id="TreeHeight.t:tre1" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:tre1"/>
+      <log idref="clockRate.c:tre2"/>
+      <log idref="reassortmentRateCwR.alltrees"/>
+      <log idref="popSizeCwR.alltrees"/>
+      <log id="networkCwRStatsLogger.alltrees" spec="coalre.statistics.NetworkStatsLogger" network="@networkCwR.alltrees"/>
+    </logger>
+    <logger id="screenlog" spec="Logger" logEvery="1000">
+      <log idref="posterior"/>
+      <log idref="likelihood"/>
+      <log idref="prior"/>
+    </logger>
+    <logger id="treelog.t:tre2" spec="Logger" fileName="$(tree).trees" logEvery="1000" mode="tree">
+      <log id="TreeWithMetaDataLogger.t:tre2" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:tre2"/>
+    </logger>
+    <logger id="treelog.t:tre1" spec="Logger" fileName="$(tree).trees" logEvery="1000" mode="tree">
+      <log id="TreeWithMetaDataLogger.t:tre1" spec="beast.evolution.tree.TreeWithMetaDataLogger" tree="@Tree.t:tre1"/>
+    </logger>
+    <logger id="networkCwRLogger.alltrees" spec="Logger" fileName="$(filebase).network.trees" logEvery="10000" mode="tree">
+      <log idref="networkCwR.alltrees"/>
+    </logger>
+    <operatorschedule id="OperatorSchedule" spec="OperatorSchedule"/>
+  </run>
+</beast>
