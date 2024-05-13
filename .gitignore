@@ -4,5 +4,3 @@
 .Ruserdata
 .gitignore
 .DS_Store
-*.o
-*.so

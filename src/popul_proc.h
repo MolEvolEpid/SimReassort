@@ -27,7 +27,7 @@ protected:
   static const size_t ndeme = NDEME;
 
 protected:
-  // MEMBER DATA  
+  // MEMBER DATA
   slate_t next;                 // time of next event
   size_t event;                 // mark of next event
   slate_t t0;                   // initial time
@@ -40,7 +40,7 @@ private:
   void clean (void) {};         // memory cleanup
 
 public:
-  
+
   // SERIALIZATION
   //! size of serialized binary form
   size_t bytesize (void) const {
@@ -61,7 +61,7 @@ public:
     X.clean();
     slate_t A[3];
     memcpy(A,o,sizeof(A)); o += sizeof(A);
-    X.t0 = A[0]; X.current = A[1]; X.next = A[2]; 
+    X.t0 = A[0]; X.current = A[1]; X.next = A[2];
     memcpy(&X.event,o,sizeof(size_t)); o += sizeof(size_t);
     memcpy(&X.state,o,sizeof(state_t)); o += sizeof(state_t);
     memcpy(&X.params,o,sizeof(parameters_t)); o += sizeof(parameters_t);
@@ -105,7 +105,7 @@ public:
   };
 
 public:
-  
+
   // INFORMATION EXTRACTORS
   //! get current time.
   slate_t time (void) const {
@@ -121,8 +121,8 @@ public:
   virtual void valid (void) const {};
 
 public:
-  
-  //! set parameters 
+
+  //! set parameters
   void update_params (double*, int);
   //! set initial-value parameters
   void update_IVPs (double*, int);
@@ -132,8 +132,6 @@ public:
   virtual void rinit (void) = 0;
   //! makes a jump
   virtual void jump (int e) = 0;
-  //! set an ending pose
-  virtual void batch (void) = 0;
   //! machine/human readable info
   std::string yaml (std::string tab) const;
 

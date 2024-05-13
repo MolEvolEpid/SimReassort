@@ -14,7 +14,6 @@
 ##' @param psi per capita sampling rate.
 ##' @param rhoA per capita reassortment rate for segment A
 ##' @param rhoB per capita reassortment rate for segment B
-##' @param frac fraction of batch sampling
 ##' @param n0 initial population size
 ##' @param time final time
 ##' @param t0 initial time
@@ -29,10 +28,10 @@ NULL
 runLBDPwr <- function (
   time,  t0 = 0,
   lambda = 2, mu = 1, psi = 1,
-  rhoA = 0, rhoB=0, frac = 0,
+  rhoA = 0, rhoB=0,
   n0 = 5
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB,frac=frac)
+  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB)
   ivps <- c(n0=n0)
   x <- .Call(P_makeLBDPwr2,params,ivps,t0)
   x <- .Call(P_runLBDPwr2,x,time)
@@ -44,9 +43,9 @@ runLBDPwr <- function (
 ##' @export
 continueLBDPwr <- function (
   object, time, lambda = NA, mu = NA, psi = NA,
-  rhoA = NA, rhoB = NA, frac = NA
+  rhoA = NA, rhoB = NA
 ) {
-  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB,frac=frac)
+  params <- c(lambda=lambda,mu=mu,psi=psi,rhoA=rhoA,rhoB=rhoB)
   x <- .Call(P_reviveLBDPwr2,object,params)
   .Call(P_runLBDPwr2,x,time)
 }

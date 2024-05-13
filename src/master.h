@@ -34,7 +34,7 @@ public:
 public:
   // DATA MEMBERS
   genealogy_t<ndeme> geneal[nseg+1];
-  inventory_t<ndeme> inventory[nseg+1]; 
+  inventory_t<ndeme> inventory[nseg+1];
 
 public:
   //! size of serialized binary form
@@ -67,7 +67,7 @@ public:
   }
 
 private:
-  
+
   void clean (void) { };
 
 public:
@@ -266,7 +266,7 @@ public:
     if (size < 1 || seg == NULL) err("Empty segment array!");
     if (size > nseg)  err("Requested number of segments larger the total number.");
     if (size == nseg)  err("All segments reassort simultaneously!");
-    
+
     int inda, indb;
     ball_t *a, *b;
     inda = random_integer((inventory[0])[i].size());
@@ -287,47 +287,10 @@ public:
     }
     valid_invens(e);
   };
-  //! batch_sampling at the end of the time, with fraction frac
-  void batch_sample (double frac = 0) {
-    size_t N = 0, deme_size[ndeme];
-    name_t i;
-    for (i = 0; i < ndeme; i++) {
-      deme_size[i] = (inventory[0])[i].size();
-      N += deme_size[i];
-    }
-    size_t n = (size_t)(N*frac);
-    if (n > 0) {
-      std::string e = "batch sample";
-      valid_invens(e);
-      ball_t *a;
-      name_t* inds = (name_t*)R_Calloc(n,name_t);
-      random_numbers(inds, N, n);
-      qsort(inds, n, sizeof(name_t), compare_int);
-      i = 0;
-      size_t cumdemesize = 0;
-      size_t extra = 0;
-      if (nseg > 1) extra++;
-      for (name_t d = 0; d < ndeme; d++) {
-        while (inds[i] < cumdemesize + deme_size[d]) {
-          for (name_t s = 0; s < nseg + extra; s++) {
-            a = inventory[s].get_ball_idx(inds[i],d);
-            if (cont) inventory[s].erase(a);
-            geneal[s].sample(a,time());
-          }
-          i++;
-        }
-        cumdemesize += deme_size[d];
-      }
-      valid_invens(e);
-      R_Free(inds);
-    }
-  };
   //! initialize the state
   void rinit (void);
   //! makes a jump
   void jump (int e);
-  //! set an ending pose
-  void batch (void);
 };
 
 #endif

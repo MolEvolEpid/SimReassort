@@ -1,8 +1,8 @@
 ##' Track (a set of) components from a tree
-##' 
-##' 
+##'
+##'
 ##' @name track
-##' 
+##'
 ##' @param parent.lab character; the branching node
 ##' @param child.lab character;
 ##' @param coal.lab character;
@@ -15,7 +15,7 @@
 ##' @param nodecol character;
 ##' @param incongr.nodes character vector;
 ##' @param reversed.nodes character vector;
-##' 
+##'
 ##' \describe{
 ##'   \item{parent.lab}{the specified parent branching node}
 ##'   \item{child.lab}{the specified child node}
@@ -30,18 +30,17 @@
 ##'   \item{incongr.nodes}{the discording coalescent nodes between trees}
 ##'   \item{reversed.nodes}{the reversed coalescent nodes between trees}
 ##' }
-##' 
-##' 
-##' @importFrom ape read.tree 
+##'
+##'
+##' @importFrom ape read.tree
 ##' @importFrom ggtree fortify
 ##' @importFrom dplyr filter
-##' 
+##'
 NULL
 
 
 ##' @rdname track
 ##' @return A string for the node/tip
-##' @export
 first.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
   read.tree(text=nwktree) |>
     fortify(ladderize=TRUE) |>
@@ -50,19 +49,19 @@ first.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
   if (length(parent.node) < 1)  return (NULL)
   df |> filter(parent==parent.node) -> children
   if (grepl("(g|#)",parent.lab) & nrow(children) > 0) {
-    if (any(grepl(nodecol, children |> 
-                  filter(gsub(paste0(nodecol,"(\\d)?_\\d_"),"", label) %in% desc.numset) |> 
+    if (any(grepl(nodecol, children |>
+                  filter(gsub(paste0(nodecol,"(\\d)?_\\d_"),"", label) %in% desc.numset) |>
                   getElement("label")))
         ) {
       children |> filter(grepl(nodecol,label)) |>
         filter(gsub(paste0(nodecol,"(\\d)?_\\d_"),"",label) %in% desc.numset) |>
-        filter(x==min(x)) |> 
+        filter(x==min(x)) |>
         getElement("label") -> desc.node
     } else if (any(grepl("(g|#)", children |> getElement("label")))) {
       lapply(children |> filter(grepl("g|#",label)) |> getElement("label"),
              function (par) {
                first.descendant(par, nwktree, desc.numset, nodecol)
-             }) |> 
+             }) |>
         unlist() -> desc.nodes
       desc.node <- desc.nodes[which(as.numeric(gsub(paste0(nodecol,"(\\d)?_\\d_"),"",desc.nodes))==
                                 min(as.numeric(gsub(paste0(nodecol,"(\\d)?_\\d_"),"",desc.nodes))))]
@@ -79,7 +78,6 @@ first.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
 
 ##' @rdname track
 ##' @return A string for the node/tip
-##' @export
 last.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
   read.tree(text=nwktree) |>
     fortify(ladderize=TRUE) |>
@@ -87,21 +85,21 @@ last.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
   df |> filter(grepl(paste0("^",parent.lab,"$"), label)) |> getElement("node") -> parent.node
   if (length(parent.node) < 1)  return (NULL)
   df |> filter(parent==parent.node & !grepl("r", label)) |> getElement("label") -> children.labs
-  
+
   if (length(children.labs) > 0) {
     lapply(children.labs, function (par) {
       last.descendant(par, nwktree, desc.numset, nodecol)
     }) |> unlist() -> desc.nodes
-    
+
     if (length(desc.nodes) > 0) {
       desc.node <- desc.nodes[which(as.numeric(gsub(paste0(nodecol,"(\\d)?_\\d_"),"",desc.nodes))==
-                                      max(as.numeric(gsub(paste0(nodecol,"(\\d)?_\\d_"),"",desc.nodes))))] 
+                                      max(as.numeric(gsub(paste0(nodecol,"(\\d)?_\\d_"),"",desc.nodes))))]
     } else {
       parentNum <- as.numeric(gsub(paste0(nodecol,"_0_"), "", parent.lab))
       if (parentNum %in% desc.numset){
         desc.node <- parent.lab
       } else {
-        desc.node <- NULL 
+        desc.node <- NULL
       }
     }
   } else if (grepl(nodecol, parent.lab)) {
@@ -109,7 +107,7 @@ last.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
     if (parentNum %in% desc.numset){
       desc.node <- parent.lab
     } else {
-      desc.node <- NULL 
+      desc.node <- NULL
     }
   } else {
     desc.node <- NULL
@@ -119,7 +117,6 @@ last.descendant <- function (parent.lab, nwktree, desc.numset, nodecol) {
 
 ##' @rdname track
 ##' @return A string for the node/tip
-##' @export
 first.parent <- function (child.lab, nwktree, parent.numset, nodecol) {
   child.num <- as.numeric(gsub(".+_.+_", "", child.lab))
   if (child.num <= min(parent.numset))  return (NULL)
@@ -142,16 +139,15 @@ first.parent <- function (child.lab, nwktree, parent.numset, nodecol) {
 
 ##' @rdname track
 ##' @return A vector of characters
-##' @export
 all.descendants <- function (parent.lab, nwktree, desc.col) {
   read.tree(text=nwktree) |>
     fortify(ladderize=TRUE) |>
     arrange(x) |>
     filter(label!="") -> df
-  
+
   df |> filter(grepl(paste0("^",parent.lab,"$"), label)) |> getElement("node") -> parent.node
   df |> filter(parent==parent.node) |> getElement("node") -> childs.node
-  
+
   if (length(childs.node) > 0) {
     lapply(childs.node, function (child.node) {
       df |> filter(node==child.node) |> getElement("label") -> child.label
@@ -165,27 +161,26 @@ all.descendants <- function (parent.lab, nwktree, desc.col) {
 }
 
 ##' @rdname track
-##' @export
 inbetween.nodes <- function (parent.lab, child.lab, nwktree, nodecol) {
   first.parent(
-    child.lab, nwktree, 
-    as.numeric(gsub(".+_.+_","",parent.lab)), 
+    child.lab, nwktree,
+    as.numeric(gsub(".+_.+_","",parent.lab)),
     gsub("_.+_.+","",parent.lab)
   ) -> ind
-  
+
   if (is.null(ind)) return(NULL)
-  
+
   read.tree(text=nwktree) |>
     fortify(ladderize=TRUE) |>
     arrange(x) |>
     filter(label!="") -> df
-  
+
   df |> filter(grepl(nodecol,label)) |> getElement("label") -> parent.labs
   c(0,sort(as.numeric(gsub(".+_.+_", "", parent.labs)))) -> parent.numset
-  
+
   df |> filter(grepl(parent.lab, label)) |> getElement("node") -> start.node
   df |> filter(grepl(child.lab, label)) |> getElement("node") -> end.node
-  
+
   parent.node <- Inf
   lab.seq <- NULL
   # if (grepl(nodecol, child.lab)) lab.seq <- child.lab
@@ -199,13 +194,12 @@ inbetween.nodes <- function (parent.lab, child.lab, nwktree, nodecol) {
     lab.seq <- c(lab,lab.seq)
     child.lab <- parent.lab
   }
-  
+
   return (lab.seq)
 }
 
 ##' @rdname track
 ##' @return An vector of characters
-##' @export
 notate.branches <- function (coal.lab, nwktree) {
   ReLabs <- unlist(str_extract_all(nwktree, "#Ha\\d_\\d+_\\d+"))
   read.tree(text=nwktree) |>
@@ -213,20 +207,20 @@ notate.branches <- function (coal.lab, nwktree) {
     fortify(ladderize=TRUE) |>
     arrange(x) |>
     filter(label!="") -> df
-  
+
   df |> filter(grepl(paste0("^",coal.lab,"$"),label)) |> getElement("node") -> coal.node
   df |> filter(parent==coal.node) |> getElement("node") -> child.nodes
   df |> filter(node %in% child.nodes & grepl("g", label)) -> tmp
-  
+
   if (nrow(tmp) < 1) {
-    child1 <- df |> 
-      filter(node %in% child.nodes & grepl("r", label)) |> 
-      getElement("label") |> getElement(1) 
+    child1 <- df |>
+      filter(node %in% child.nodes & grepl("r", label)) |>
+      getElement("label") |> getElement(1)
   } else {
     child1 <- tmp |> getElement("label") |> getElement(1)
   }
-  
-  df |> filter(node %in% child.nodes & label!=child1) |> 
+
+  df |> filter(node %in% child.nodes & label!=child1) |>
     getElement("label") |> getElement(1) -> child2
 
   lapply(c(child1, child2), function (child) {
@@ -249,7 +243,6 @@ notate.branches <- function (coal.lab, nwktree) {
 
 ##' @rdname track
 ##' @return logical
-##' @export
 invisible.reassortments <- function (Re.lab, nwktree) {
   coal.labs <- unlist(str_extract_all(nwktree,"g_\\d+_\\d+"))
   coal.numset <- sort(as.numeric(gsub("g_\\d_","",coal.labs)))
@@ -261,7 +254,6 @@ invisible.reassortments <- function (Re.lab, nwktree) {
 
 ##' @rdname track
 ##' @return An string
-##' @export
 get.mrca <- function (node.lab1, node.lab2, nwktree) {
   root.lab <- "m_0_0"
   do.call(intersect,lapply(c(node.lab1, node.lab2), function (node) {
@@ -272,18 +264,17 @@ get.mrca <- function (node.lab1, node.lab2, nwktree) {
 
 ##' @rdname track
 ##' @return A string
-##' @export
 track.theother <- function (nodelab, nwktree, nodecol) {
   read.tree(text=nwktree) |>
     fortify(ladderize=TRUE) |>
     arrange(x) |>
     filter(label!="") -> df
-  
+
   CoalLabs <- unlist(str_extract_all(nwktree, "g_\\d_\\d+"))
   CoalNums <- sort(as.numeric(gsub("g_\\d_", "", CoalLabs)))
   parlab <- first.parent(nodelab, nwktree, CoalNums, "g")
   parnode <- df |> filter(grepl(paste0("^",parlab,"$"), label)) |> getElement("node")
-  df |> filter(parent==parnode) |> 
+  df |> filter(parent==parnode) |>
     filter(!grepl(paste0("^",nodelab,"$"),label)) |>
     filter(grepl(nodecol,label)) |>
     getElement("label")
@@ -291,12 +282,11 @@ track.theother <- function (nodelab, nwktree, nodecol) {
 
 ##' @rdname track
 ##' @return An vector of characters
-##' @export
 fixed.reassortments <- function (parent.lab, nwktree, incongr.nodes, reversed.nodes, fixed.renodes=NULL) {
   # check whether the parent.lab is in the tree
   if (str_extract_all(nwktree, parent.lab) |> unlist() |> length() < 1)
     stop("The node label is not in the tree.")
-  
+
   # 1. get the first incongruent / reversed node descendant, node.lab
   cand.incongr.reversed.set <- c(incongr.nodes, reversed.nodes)
   cand.incongr.reversed.nums <- sort(as.numeric(gsub("g_\\d_","",cand.incongr.reversed.set)))
@@ -307,7 +297,7 @@ fixed.reassortments <- function (parent.lab, nwktree, incongr.nodes, reversed.no
   cand.coal.nums <- as.numeric(gsub("g_\\d_","",cand.coal.nodes))
   node.lab <- cand.coal.nodes[min(which(cand.coal.nums >= parent.num))]
   node.num <- as.numeric(gsub("g_\\d_","",node.lab))
-  
+
   if (node.num < max(cand.incongr.reversed.nums)) {
     # 2. for node.lab, get all incongr/reversed descendants
     #    and all reassortment node descendants
@@ -325,7 +315,7 @@ fixed.reassortments <- function (parent.lab, nwktree, incongr.nodes, reversed.no
       set.nums <- as.numeric(gsub("g_0_","",set))
       lapply(desc.cands, function (nnode) {
         nnode.num <- as.numeric(gsub("g_0_","",nnode))
-        if (nnode.num %in% set.nums && nnode.num != min(set.nums)) 
+        if (nnode.num %in% set.nums && nnode.num != min(set.nums))
           return (nnode)
       }) |> unlist()
     }) |> unlist() -> ignored.nodes
@@ -348,13 +338,12 @@ fixed.reassortments <- function (parent.lab, nwktree, incongr.nodes, reversed.no
 
 ##' @rdname track
 ##' @return An vector of characters
-##' @export
 tree.fixed <- function (nwktree, incongr.nodes, reversed.nodes) {
   # get the root of the tree
   br.nodes <- str_extract_all(nwktree,"g_\\d_\\d+") |> unlist()
   br.nums <- sort(as.numeric(gsub("g_0_","",br.nodes)))
   root.lab <- paste0("g_0_",min(br.nums))
-  
+
   return (fixed.reassortments(root.lab, nwktree, incongr.nodes, reversed.nodes))
 }
 

@@ -1,8 +1,8 @@
 ##' internals
-##' 
-##' 
+##'
+##'
 ##' @name internals
-##' 
+##'
 ##' @param x \code{gpsim} object
 ##' @param prune logical
 ##' @param init.include logical
@@ -11,30 +11,28 @@
 ##' @param phy \code{phylo} object
 ##' @param p node label
 ##' @param df data frame
-##' 
-##' 
-##' 
+##'
+##'
+##'
 ##' @importFrom stringr str_extract_all
 ##' @importFrom ggtree fortify
 ##' @importFrom dplyr arrange filter
-##' 
-##' 
+##'
+##'
 ##' @keywords internals
 
 
 ##' @rdname internals
-##' @export
 current_popsize <- function (x) {
-  x |> 
-    getInfo(prune=FALSE, lineages=TRUE) |> 
+  x |>
+    getInfo(prune=FALSE, lineages=TRUE) |>
     getElement("lineages") |>
     getElement(1) -> lineages
-  
+
   return (lineages$lineages[nrow(lineages)-1])
 }
 
 ##' @rdname internals
-##' @export
 get_roottime <- function (x, prune=FALSE, init.include=FALSE) {
   if (!prune && current_popsize(x) < 2) {
     root.time <- 0
@@ -47,13 +45,12 @@ get_roottime <- function (x, prune=FALSE, init.include=FALSE) {
         arrange(x) |>
         filter(grepl("g_",label)) |>
         getElement("x") |> getElement(1)
-    }) |> unlist() |> min() -> root.time 
+    }) |> unlist() |> min() -> root.time
   }
   return (root.time)
 }
 
 ##' @rdname internals
-##' @export
 get_tiptimes <- function (x, prune=FALSE) {
   if (!prune && current_popsize(x) < 2) {
     tip.times <- NA
@@ -69,20 +66,18 @@ get_tiptimes <- function (x, prune=FALSE) {
 }
 
 ##' @rdname internals
-##' @export
 get_discrepancies <- function (tr1, tr2) {
   lapply(c(tr1,tr2), function (tr) {
     str_extract_all(tr, "g_\\d_\\d+") |> unlist()
   }) -> coalset
-  
+
   coal.common <- do.call(intersect, coalset)
   coal.all <- do.call(union, coalset)
-  
+
   setdiff(coal.all, coal.common)
 }
 
 ##' @rdname internals
-##' @export
 drop_node <- function (phy, node) {
   lapply(node, function(nd) {
     sum(grepl(paste0(nd,"$"),phy$node.label))
@@ -113,7 +108,6 @@ drop_node <- function (phy, node) {
 }
 
 ##' @rdname internals
-##' @export
 nwk_recur <- function(p, df) {
   node <- df[df$node == p,] |> getElement("label")
   childs <- df[df$parent == p,] |> getElement("node")
@@ -125,7 +119,6 @@ nwk_recur <- function(p, df) {
 }
 
 ##' @rdname internals
-##' @export
 write_nwk <- function(df) {
   p <- df |> arrange(x) |> getElement("parent") |> getElement(1)
   paste0(gsub("\\(\\)","",nwk_recur(p,df)),";") -> out
