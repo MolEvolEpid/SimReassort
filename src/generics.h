@@ -75,12 +75,6 @@ SEXP newick (const TYPE& X, bool compact = true) {
   return out;
 }
 
-//! reassortment times
-template<class TYPE>
-SEXP re_times (const TYPE& X) {
-  return X.reassortment_times();
-}
-
 //! initialization
 template<class TYPE>
 SEXP make (SEXP Params, SEXP IVPs, SEXP T0) {
@@ -142,11 +136,11 @@ SEXP lineage_count (const TYPE& G) {
 //! prune and/or obscure and/or hide if requested
 template <class TYPE>
 SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
-           SEXP T0, SEXP Time, SEXP Descript, 
+           SEXP T0, SEXP Time, SEXP Descript,
            SEXP Yaml, SEXP Structure, SEXP Lineages,
            SEXP Tree, SEXP Compact) {
   TYPE A = State;
-  
+
   // prune and/or obscure and/or hide if requested
   bool do_prune = *LOGICAL(AS_LOGICAL(Prune));
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
@@ -163,29 +157,29 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
     for (name_t s = 0; s < A.nseg + extra; s++)   A.geneal[s].hide();
   }
   size_t nout = 0;
-  
+
   bool get_t0 = *LOGICAL(AS_LOGICAL(T0));
   if (get_t0) nout++;
-  
+
   bool get_time = *LOGICAL(AS_LOGICAL(Time));
   if (get_time) nout++;
-  
+
   bool get_desc = *LOGICAL(AS_LOGICAL(Descript));
   if (get_desc) nout++;
-  
+
   bool get_yaml = *LOGICAL(AS_LOGICAL(Yaml));
   if (get_yaml) nout++;
-  
+
   bool get_struc = *LOGICAL(AS_LOGICAL(Structure));
   if (get_struc) nout++;
-  
+
   bool get_lin = *LOGICAL(AS_LOGICAL(Lineages));
   if (get_lin) nout++;
-  
+
   bool get_tree = *LOGICAL(AS_LOGICAL(Tree));
   if (get_tree) nout++;
   bool do_compact = *LOGICAL(AS_LOGICAL(Compact));
-  
+
   // pack up return values in a list
   int k = 0;
   SEXP out, outnames;
@@ -213,7 +207,7 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
     k = set_list_elem(out,outnames,newick(A,do_compact),"tree",k);
   }
   SET_NAMES(out,outnames);
-  
+
   UNPROTECT(2);
   return out;
 }

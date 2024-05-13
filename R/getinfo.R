@@ -3,7 +3,7 @@
 ##' Retrieve information from genealogy process simulation
 ##'
 ##' @name getInfo
-##' 
+##'
 ##' @param object \code{gpsim} object.
 ##' @param prune logical; prune the genealogy?
 ##' @param obscure logical; obscure the demes?
@@ -16,7 +16,6 @@
 ##' @param yaml logical; return the structure in YAML format?
 ##' @param structure logical; return the structure in \R list format?
 ##' @param lineages logical; return the lineage-count function?
-##' @param retimes logical; return the reassortment times?
 ##'
 ##' @include package.R
 ##' @importFrom dplyr bind_cols
@@ -32,9 +31,8 @@
 ##'   \item{yaml}{the state of the genealogy process in YAML format}
 ##'   \item{structure}{the state of the genealogy process in \R list format}
 ##'   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
-##'   \item{retimes}{a \code{\link[tibble]{tibble}} containing reassortment times}
 ##' }
-##' 
+##'
 ##' @example examples/lbdpwr.R
 ##'
 ##' @rdname getinfo
@@ -42,22 +40,26 @@
 getInfo <- function (
     object, prune  = TRUE, obscure = TRUE, hide = FALSE,
     t0 = FALSE, time = FALSE,
-    description = FALSE, retimes = FALSE,
+    description = FALSE,
     structure = FALSE, yaml = FALSE,
     lineages = FALSE,
     tree = FALSE, compact = TRUE)
 {
   x <- switch(
+    # SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
+    #            SEXP T0, SEXP Time, SEXP Descript,
+    #            SEXP Yaml, SEXP Structure, SEXP Lineages,
+    #            SEXP Tree, SEXP Compact) {
     paste0("model",as.character(attr(object,"model"))),
-    modelLBDPwr2 = .Call(P_infoLBDPwr,object,prune,obscure,hide,t0,time,
-                        description,retimes,yaml,structure,lineages,tree,compact),
+    modelLBDPwr = .Call(P_infoLBDPwr2,object,prune,obscure,hide,t0,time,
+                        description,yaml,structure,lineages,tree,compact),
     model = stop("no model specified",call.=FALSE),
     stop("unrecognized model ",sQuote(attr(object,"model")),call.=FALSE)
   )
   if (!is.null(x$tree)) {
     x$tree <- gsub("nan","NA",x$tree)
   }
-  
+
   if (!is.null(x$lineages)) {
     lapply(x$lineages, function(y) {
       n <- length(y$time)

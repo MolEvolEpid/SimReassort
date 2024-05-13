@@ -16,7 +16,6 @@ typedef struct {
   double psi;
   double rhoA;
   double rhoB;
-  double frac;
   int n0;
 } lbdpwr2_parameters_t;
 
@@ -32,7 +31,6 @@ std::string lbdpwr2_proc_t::yaml (std::string tab) const {
     + YAML_PARAM(psi)
     + YAML_PARAM(rhoA)
     + YAML_PARAM(rhoB)
-    + YAML_PARAM(frac)
     + YAML_PARAM(n0);
     std::string s = tab + "state:\n"
     + YAML_STATE(n);
@@ -47,7 +45,6 @@ void lbdpwr2_proc_t::update_params (double *p, int n) {
   PARAM_SET(psi);
   PARAM_SET(rhoA);
   PARAM_SET(rhoB);
-  PARAM_SET(frac);
   if (m != n) err("wrong number of parameters!");
 }
 

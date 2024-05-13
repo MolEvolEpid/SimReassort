@@ -29,17 +29,16 @@ NULL
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,
-  prune = TRUE, obscure = TRUE, hide = FALSE, compact = TRUE, retimes = FALSE
+  prune = TRUE, obscure = TRUE, hide = FALSE, compact = TRUE
 ) {
   out <- getInfo(x,tree=TRUE,t0=TRUE,time=TRUE,
-    prune=prune,obscure=obscure,hide=hide,compact=compact,retimes=retimes)
+    prune=prune,obscure=obscure,hide=hide,compact=compact)
   if (missing(time)) time <- out$time
   if (missing(t0)) t0 <- out$t0
-  
+
   plot_grid(
     plotlist=lapply(out$tree, function(tr) {
       treeplot(tr,time=time,t0=t0,...) -> p
-      if (retimes)  p <- p + geom_vline(xintercept=out$retimes, linetype="dashed", alpha=.3)
       p}),
     ncol=1,align="v")
 }
@@ -60,14 +59,14 @@ treeplot <- function (
     ladderize = TRUE, points = FALSE, ...,
     palette = scales::hue_pal(l=30,h=c(220,580))
 ) {
-  
+
   if (missing(tree) || is.null(tree))
     stop(sQuote("tree")," must be specified.",call.=FALSE)
   t0 <- as.numeric(t0)
   ladderize <- as.logical(ladderize)
   points <- as.logical(points)
-  
-  
+
+
   read.tree(text=as.character(tree)) |>
     fortify(ladderize=ladderize) |>
     arrange(x) |>
@@ -78,7 +77,7 @@ treeplot <- function (
       time = x,
       nodecol=if_else(grepl("^#Ha(1)?$",nodecol),"a1",if_else(grepl("\\#Ha2",nodecol),"a2",nodecol))
     ) -> dat
-  
+
   ndeme <- max(1L,length(unique(dat$deme))-1L)
   if (is.function(palette)) {
     palette <- palette(ndeme)
@@ -88,9 +87,9 @@ treeplot <- function (
            " must have length at least ",ndeme,
            " if specified as a vector.",call.=FALSE)
   }
-  
+
   time <- as.numeric(c(time,max(dat$x)))[1L]
-  
+
   if (is.na(t0)) { # root time is to be determined from the current time
     dat |> mutate(x=x-max(x)+time) -> dat
   } else {
@@ -100,7 +99,7 @@ treeplot <- function (
     vis=nodecol != "i",
     reassort=nodecol == "a1"
   ) -> dat
-  
+
   ## number of nodes and tips of each color
   expand_grid(
     nodecol=c("o","b","r","g","p","a1","a2","m"),
@@ -117,9 +116,9 @@ treeplot <- function (
     unite(rowname,c(nodecol,isTip)) |>
     column_to_rownames() |>
     as.matrix() -> ncolors
-  
+
   attr(dat,"layout") <- "rectangular"
-  
+
   dat |>
     ggplot(aes(x=x,y=y))+
     geom_tree(aes(alpha=vis,color=deme,linetype=reassort))+
@@ -131,7 +130,7 @@ treeplot <- function (
     expand_limits(x=c(t0,time))+
     theme_tree2() +
     theme(...) -> pl
-  
+
   if (points) {
     if (ncolors["g_node",] > 0) {
       pl+geom_nodepoint(
