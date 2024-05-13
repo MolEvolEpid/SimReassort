@@ -11,22 +11,22 @@
 \alias{write_nwk}
 \title{internals}
 \usage{
-current_popsize(object)
+current_popsize(x)
 
-get_roottime(object, prune = FALSE, init.include = FALSE)
+get_roottime(x, prune = FALSE, init.include = FALSE)
 
-get_tiptimes(object, prune = FALSE)
+get_tiptimes(x, prune = FALSE)
 
 get_discrepancies(tr1, tr2)
 
-drop_node(phy, nodes)
+drop_node(phy, node)
 
 nwk_recur(p, df)
 
 write_nwk(df)
 }
 \arguments{
-\item{object}{\code{gpsim} object}
+\item{x}{\code{gpsim} object}
 
 \item{prune}{logical}
 
@@ -38,22 +38,9 @@ write_nwk(df)
 
 \item{phy}{\code{phylo} object}
 
-\item{nodes}{a character vector}
+\item{p}{node label}
 
-\item{p}{character}
-
-\item{df}{tree data frame}
-}
-\value{
-an integer
-
-a numeric value
-
-a numeric vector
-
-a character vector
-
-a \sQuote{phylo} object
+\item{df}{data frame}
 }
 \description{
 internals

@@ -127,19 +127,6 @@ SEXP run (SEXP State, SEXP Tout) {
   return out;
 }
 
-template<class TYPE>
-SEXP batch (SEXP State) {
-  SEXP out;
-  TYPE X = State;
-  GetRNGstate();
-  X.valid();
-  X.batch();
-  PutRNGstate();
-  PROTECT(out = serial(X));
-  UNPROTECT(1);
-  return out;
-}
-
 //! number of lineages through time
 template <class TYPE>
 SEXP lineage_count (const TYPE& G) {
@@ -243,10 +230,6 @@ return revive<TYPE>(State,Params);                                      \
 return run<TYPE>(State,Times);                                  \
 }                                                               \
 
-#define BATCHFN(X,TYPE) SEXP batch ## X (SEXP State) {        \
-return batch<TYPE>(State);                                    \
-}                                                             \
-
 #define INFOFN(X,TYPE) SEXP info ## X (                                 \
 SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,                        \
 SEXP T0, SEXP Time, SEXP Descript,                                      \
@@ -266,8 +249,6 @@ extern "C" {                                    \
   REVIVEFN(X,TYPE)                              \
                                                 \
   RUNFN(X,TYPE)                                 \
-                                                \
-  BATCHFN(X,TYPE)                               \
                                                 \
   INFOFN(X,TYPE)                                \
                                                 \

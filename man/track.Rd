@@ -2,38 +2,38 @@
 % Please edit documentation in R/track_functions.R
 \name{track}
 \alias{track}
-\alias{track_first_desc}
-\alias{track_last_desc}
-\alias{track_first_parent}
-\alias{track_descs}
-\alias{track_between_nodes}
-\alias{mark_removable_br}
-\alias{track_Re_removed}
-\alias{track_mrca}
-\alias{track_theother}
-\alias{get_desc_fixed_renodes}
-\alias{get_tree_fixed_renodes}
-\title{Track/get components from a tree}
+\alias{first.descendant}
+\alias{last.descendant}
+\alias{first.parent}
+\alias{all.descendants}
+\alias{inbetween.nodes}
+\alias{notate.branches}
+\alias{invisible.reassortments}
+\alias{get.mrca}
+\alias{track.theother}
+\alias{fixed.reassortments}
+\alias{tree.fixed}
+\title{Track (a set of) components from a tree}
 \usage{
-track_first_desc(parent.lab, nwktree, desc.numset, nodecol)
+first.descendant(parent.lab, nwktree, desc.numset, nodecol)
 
-track_last_desc(parent.lab, nwktree, desc.numset, nodecol)
+last.descendant(parent.lab, nwktree, desc.numset, nodecol)
 
-track_first_parent(child.lab, nwktree, parent.numset, nodecol)
+first.parent(child.lab, nwktree, parent.numset, nodecol)
 
-track_descs(parent.lab, nwktree, desc.col)
+\method{all}{descendants}(parent.lab, nwktree, desc.col)
 
-track_between_nodes(parent.lab, child.lab, nwktree, nodecol)
+inbetween.nodes(parent.lab, child.lab, nwktree, nodecol)
 
-mark_removable_br(coal.lab, nwktree)
+notate.branches(coal.lab, nwktree)
 
-track_Re_removed(Re.lab, nwktree)
+invisible.reassortments(Re.lab, nwktree)
 
-track_mrca(node.lab1, node.lab2, nwktree)
+get.mrca(node.lab1, node.lab2, nwktree)
 
-track_theother(nodelab, nwktree, nodecol)
+track.theother(nodelab, nwktree, nodecol)
 
-get_desc_fixed_renodes(
+fixed.reassortments(
   parent.lab,
   nwktree,
   incongr.nodes,
@@ -41,12 +41,12 @@ get_desc_fixed_renodes(
   fixed.renodes = NULL
 )
 
-get_tree_fixed_renodes(nwktree, incongr.nodes, reversed.nodes)
+tree.fixed(nwktree, incongr.nodes, reversed.nodes)
 }
 \arguments{
 \item{parent.lab}{character; the branching node}
 
-\item{nwktree}{character; tree in newick format}
+\item{nwktree}{character; tree in newick formate}
 
 \item{desc.numset}{numeric vector;}
 
@@ -105,5 +105,5 @@ An vector of characters
 An vector of characters
 }
 \description{
-Track/get components from a tree
+Track (a set of) components from a tree
 }

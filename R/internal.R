@@ -23,7 +23,6 @@
 
 
 ##' @rdname internals
-##' @method get current population size from a \sQuote{gpsim} object
 ##' @export
 current_popsize <- function (x) {
   x |> 
@@ -35,7 +34,6 @@ current_popsize <- function (x) {
 }
 
 ##' @rdname internals
-##' @method get the root time from a \sQuote{gpsim} object
 ##' @export
 get_roottime <- function (x, prune=FALSE, init.include=FALSE) {
   if (!prune && current_popsize(x) < 2) {
@@ -55,7 +53,6 @@ get_roottime <- function (x, prune=FALSE, init.include=FALSE) {
 }
 
 ##' @rdname internals
-##' @method get all tip times / sample times from a \sQuote{gpsim} object
 ##' @export
 get_tiptimes <- function (x, prune=FALSE) {
   if (!prune && current_popsize(x) < 2) {
@@ -72,7 +69,6 @@ get_tiptimes <- function (x, prune=FALSE) {
 }
 
 ##' @rdname internals
-##' @method get the discording branching nodes from two tree objects in newick format
 ##' @export
 get_discrepancies <- function (tr1, tr2) {
   lapply(c(tr1,tr2), function (tr) {
@@ -86,7 +82,6 @@ get_discrepancies <- function (tr1, tr2) {
 }
 
 ##' @rdname internals
-##' @method drop a node from a \sQuote{phylo} object by node label
 ##' @export
 drop_node <- function (phy, node) {
   lapply(node, function(nd) {
@@ -118,7 +113,6 @@ drop_node <- function (phy, node) {
 }
 
 ##' @rdname internals
-##' @method produce newick format from a tree data frame starting from a node
 ##' @export
 nwk_recur <- function(p, df) {
   node <- df[df$node == p,] |> getElement("label")
@@ -131,7 +125,6 @@ nwk_recur <- function(p, df) {
 }
 
 ##' @rdname internals
-##' @method produce newick format from a tree data frame
 ##' @export
 write_nwk <- function(df) {
   p <- df |> arrange(x) |> getElement("parent") |> getElement(1)

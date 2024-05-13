@@ -1,5 +1,5 @@
-#ifndef _PHYLOPOMP_INTERNAL_H_
-#define _PHYLOPOMP_INTERNAL_H_
+#ifndef _SIMREASSORT_INTERNAL_H_
+#define _SIMREASSORT_INTERNAL_H_
 
 #include <R.h>
 #include <Rmath.h>

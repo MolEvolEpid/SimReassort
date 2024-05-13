@@ -27,12 +27,12 @@ simulate <- function (object, ...) {
 simulate.default <- function (object, ...) {
   if (missing(object) || is.null(object))
     message(
-      "Available phylopomp models:\n",
+      "Available SimReassort models:\n",
       "- LBDPwr: segmented linear birth-death-sampling process\n"
     )
   else
     stop(
-      "in ",sQuote("phylopomp::simulate"),": ",
+      "in ",sQuote("SimReassort::simulate"),": ",
       sQuote("object")," must be specified as either ",
       "the name of a model or the result of a previous simulation.\n",
       "Do ",sQuote("simulate()")," to view available models.",

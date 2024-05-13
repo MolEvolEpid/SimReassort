@@ -17,7 +17,6 @@
 ##' @param ... passed to \code{\link[ggplot2]{theme}}.
 ##' @return A printable \code{ggplot} object.
 ##'
-##' @example examples/movie.R
 ##'
 NULL
 

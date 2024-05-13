@@ -98,7 +98,7 @@ drop_parent_re <- function (init.nwk, seg.nwk) {
   ##               |--------#Ha---
   lapply(nwks, function (nwk) {
     lapply(unlist(str_extract_all(nwk, "#Ha\\d+_\\d+_\\d+")), function (ReLab) {
-      if (track_Re_removed(ReLab, nwk))
+      if (invisible.reassortments(ReLab, nwk))
         return (as.numeric(gsub("#Ha\\d_\\d+_","",ReLab)))
       return (NULL)
     }) |> unlist()
@@ -122,7 +122,7 @@ get_reversions <- function (init.nwk, seg.nwk) {
     common.set <- NULL
     for (renum in rev(seg.unReNums)) {
       ReLab <- paste0("#Ha\\d+_\\d+_", renum)
-      track_first_parent(ReLab, nwk, parnums, "g") -> parlab
+      first.parent(ReLab, nwk, parnums, "g") -> parlab
       if (!is.null(parlab)) {
         parnums <- setdiff(parnums, as.numeric(gsub("g_0_","",parlab)))
         common.set <- c(common.set, renum, parlab)
@@ -167,9 +167,9 @@ compute_preRRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, reve
   seg.parnums <- sort(c(incongr.Numset, reversed.Numset))
   candidates <- paste0("g_0_", seg.parnums)
   for (dispar in rev(candidates)) {
-    track_last_desc(dispar, trees[2], seg.reNums, "#Ha1") -> corres.re
+    last.descendant(dispar, trees[2], seg.reNums, "#Ha1") -> corres.re
     if (is.null(corres.re))
-      track_first_parent(dispar, trees[2], seg.reNums, "#Ha1") -> corres.re
+      first.parent(dispar, trees[2], seg.reNums, "#Ha1") -> corres.re
     # print(c(dispar, corres.re))
     if (is.null(corres.re)) next
     seg.reNums <- setdiff(seg.reNums, as.numeric(gsub("#Ha1_0_","",corres.re)))
@@ -189,7 +189,7 @@ compute_preRRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, reve
   seg.set <- NULL
   seg.parnums <- sort(c(incongr.Numset, reversed.Numset))
   for (unre in sort(as.numeric(seg.join$ReLab))) {
-    track_first_parent(paste0("#Ha2_0_", unre), trees[1], seg.parnums, "(g)|(#Ha2)|(m)") -> corres.par
+    first.parent(paste0("#Ha2_0_", unre), trees[1], seg.parnums, "(g)|(#Ha2)|(m)") -> corres.par
     seg.parnums <- setdiff(seg.parnums, as.numeric(gsub("((g)|(#Ha2))_0_", "", corres.par)))
     seg.set <- c(seg.set, unre, corres.par)
   }
@@ -227,7 +227,7 @@ refine_RRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, RRtab) {
   ReCoalnodes.init <- RRtab$RemoveNode
   ReCoalnodes.seg <- RRtab$RejoinNode
   lapply(trees, function (tree) {
-    get_tree_fixed_renodes(tree, incongr.nodes, RevNodes)
+    tree.fixed(tree, incongr.nodes, RevNodes)
   }) |> unlist() |>
     (\(x) {
       as.numeric(gsub("#Ha\\d_\\d_","",x))
@@ -249,16 +249,16 @@ refine_RRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, RRtab) {
     ## Scenario 1: in init infect tree
     ## and remove m
     if (!m %in% fixed.renodes) {
-      track_mrca(paste0("#Ha\\d_\\d_",m), paste0("#Ha\\d_\\d_",n), trees[1]) -> mrca.init
-      node.mrca.desc.init <- track_first_parent(
+      get.mrca(paste0("#Ha\\d_\\d_",m), paste0("#Ha\\d_\\d_",n), trees[1]) -> mrca.init
+      node.mrca.desc.init <- first.parent(
         mrca.init, trees[1], 
         as.numeric(gsub("g_\\d_","",node)), "g")
       
       if (!is.null(node.mrca.desc.init) && mrca.init==b) return(m)
       
-      btwn.nodes <- track_between_nodes(a,paste0("#Ha2_0_",m),trees[1],"g")
+      btwn.nodes <- inbetween.nodes(a,paste0("#Ha2_0_",m),trees[1],"g")
       if (all(lapply(btwn.nodes, function (node) {
-        mark_removable_br(node, trees[1])
+        notate.branches(node, trees[1])
       }) |> unlist()) && !is.null(btwn.nodes)) 
         return(m)
     }
@@ -266,8 +266,8 @@ refine_RRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, RRtab) {
     ## Scenario 2: in the seg tree
     ## and remove n
     if (!n %in% fixed.renodes) {
-      track_mrca(paste0("#Ha\\d_\\d_",m), paste0("#Ha\\d_\\d_",n), trees[2]) -> mrca.seg
-      node.mrca.desc.seg <- track_first_parent(
+      get.mrca(paste0("#Ha\\d_\\d_",m), paste0("#Ha\\d_\\d_",n), trees[2]) -> mrca.seg
+      node.mrca.desc.seg <- first.parent(
         mrca.seg, trees[2], 
         as.numeric(gsub("g_\\d_","",node)), "g")
       
@@ -276,29 +276,29 @@ refine_RRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, RRtab) {
       
       AllReLabs <- unlist(str_extract_all(trees[2],"#Ha\\d_\\d_\\d+"))
       AllReNums <- sort(as.numeric(gsub("#Ha\\d_\\d_","",AllReLabs)))
-      c.par.seg.re <- track_first_parent(c,trees[2],c(CoalNums[[2]],AllReNums),"#Ha1")
+      c.par.seg.re <- first.parent(c,trees[2],c(CoalNums[[2]],AllReNums),"#Ha1")
       
       if (!is.null(c.par.seg.re) && c.par.seg.re==m) return(n)
     }
     
     ## Scenario 3: in both trees, neither m nor n
     ## but descendants of the reversed node
-    ReDescs.init.num <- as.numeric(gsub("#Ha\\d_\\d_","",track_descs(a,trees[1],"#Ha2")))
-    ReDescs.seg.num <- as.numeric(gsub("#Ha\\d_\\d_","",track_descs(a,trees[2],"#Ha1")))
+    ReDescs.init.num <- as.numeric(gsub("#Ha\\d_\\d_","",all.descendants(a,trees[1],"#Ha2")))
+    ReDescs.seg.num <- as.numeric(gsub("#Ha\\d_\\d_","",all.descendants(a,trees[2],"#Ha1")))
     CommonReDesc.num <- sort(ReDescs.init.num[ReDescs.init.num %in% ReDescs.seg.num])
     CommonReDesc.num <- CommonReDesc.num[!CommonReDesc.num %in% fixed.renodes]
     if (length(CommonReDesc.num) < 1) return (NULL)
     lapply(CommonReDesc.num, function (renode.num) {
       tryCatch({
-        par1.init <- track_between_nodes(a,paste0("#Ha2_0_", renode.num),trees[1],"g")[1]
-        descs.init.par1.br <- track_descs(par1.init,trees[1],"g")
+        par1.init <- inbetween.nodes(a,paste0("#Ha2_0_", renode.num),trees[1],"g")[1]
+        descs.init.par1.br <- all.descendants(par1.init,trees[1],"g")
         descs.init.par1.br.incongr <- descs.init.par1.br[descs.init.par1.br %in% c(incongr.init, incongr.seg, RevNodes)]
-        descs.init.par1.re <- track_descs(par1.init,trees[1],"#Ha2")
-        btwn.init.re <- track_between_nodes(par1.init,paste0("#Ha2_0_", renode.num),trees[1],"#Ha2")
-        par1.seg <- track_between_nodes(a,paste0("#Ha1_0_", renode.num),trees[2],"g")[1]
-        descs.seg.par1.br <- track_descs(par1.seg,trees[2],"g")
+        descs.init.par1.re <- all.descendants(par1.init,trees[1],"#Ha2")
+        btwn.init.re <- inbetween.nodes(par1.init,paste0("#Ha2_0_", renode.num),trees[1],"#Ha2")
+        par1.seg <- inbetween.nodes(a,paste0("#Ha1_0_", renode.num),trees[2],"g")[1]
+        descs.seg.par1.br <- all.descendants(par1.seg,trees[2],"g")
         descs.seg.par1.br.incongr <- descs.seg.par1.br[descs.seg.par1.br %in% c(incongr.init, incongr.seg, RevNodes)]
-        descs.seg.par1.re <- track_descs(par1.seg,trees[2],"#Ha1")
+        descs.seg.par1.re <- all.descendants(par1.seg,trees[2],"#Ha1")
         if (length(descs.init.par1.re) > length(descs.init.par1.br.incongr) && 
             length(btwn.init.re) < 1 &&
             length(descs.seg.par1.re) > length(descs.seg.par1.br.incongr))
@@ -312,30 +312,30 @@ refine_RRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, RRtab) {
   if (is.null(Re.removed)) {
     apply(RRtab, 1, function (l) {
       ## scenario 1: wrong assignment at the first place
-      re.par.init <- track_first_parent(paste0("#Ha\\d_\\d_",l[1]), trees[1], CoalNums[[1]], "g")
-      re.par.seg <- track_first_parent(paste0("#Ha\\d_\\d_",l[1]), trees[2], CoalNums[[2]], "g")
+      re.par.init <- first.parent(paste0("#Ha\\d_\\d_",l[1]), trees[1], CoalNums[[1]], "g")
+      re.par.seg <- first.parent(paste0("#Ha\\d_\\d_",l[1]), trees[2], CoalNums[[2]], "g")
       
       if (!all(re.par.init %in% c(incongr.init, RevNodes), re.par.seg %in% c(incongr.seg, RevNodes)))
         return (as.numeric(l[1]))
       
       ## scenario 2
-      remove.mark <- mark_removable_br(l[2], trees[1])
-      rejoin.mark <- mark_removable_br(l[3], trees[2])
+      remove.mark <- notate.branches(l[2], trees[1])
+      rejoin.mark <- notate.branches(l[3], trees[2])
       
       if (!all(remove.mark,rejoin.mark))  return (NULL)
       
-      track_first_parent(
+      first.parent(
         unname(unlist(l[2])),trees[1],
         CoalNums[[1]],"g"
       ) -> par.init
-      track_first_parent(
+      first.parent(
         unlist(unname(l[3])),trees[2],
         CoalNums[[2]],"g"
       ) -> par.seg
       
       if (is.null(par.seg) || is.null(par.init))  return (NULL)
       
-      track_first_parent(
+      first.parent(
         par.seg, trees[2],
         as.numeric(gsub("g_0_","",par.init)), "g"
       ) -> par.seg.par
@@ -343,9 +343,9 @@ refine_RRtab <- function (init.nwk, seg.nwk, incongr.init, incongr.seg, RRtab) {
       if (is.null(par.seg.par)) return (NULL)
       
       if (par.init %in% RevNodes) {
-        btwn.nodes <- c(track_between_nodes(par.init, par.seg, trees[2], "g"), par.seg)
+        btwn.nodes <- c(inbetween.nodes(par.init, par.seg, trees[2], "g"), par.seg)
         lapply(btwn.nodes, function (node) {
-          mark_removable_br(node, trees[2])
+          notate.branches(node, trees[2])
         }) |> unlist() -> ind
         if (ind)  return(as.numeric(unname(l[1])))
       }

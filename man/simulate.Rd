@@ -27,7 +27,7 @@ simulate(object, ...)
 An object of \sQuote{gpsim} class.
 }
 \description{
-Simulate linear-birth-and-death processes with reassortment
+Simulate Markov genealogy processes
 }
 \details{
 When \code{object} is of class \sQuote{gpsim}, i.e., the result of a genealogy-process
