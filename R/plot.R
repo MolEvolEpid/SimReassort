@@ -202,7 +202,7 @@ ball_colors <- c(
   p="purple",
   a1="gold4",
   a2="orange1",
-  i=alpha("white",0)
+  i=scales::alpha("white",0)
 )
 
 
