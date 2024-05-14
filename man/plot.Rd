@@ -14,8 +14,7 @@
   prune = TRUE,
   obscure = TRUE,
   hide = FALSE,
-  compact = TRUE,
-  retimes = FALSE
+  compact = TRUE
 )
 
 treeplot(
@@ -44,8 +43,6 @@ treeplot(
 \item{hide}{logical; hide reassortment events?}
 
 \item{compact}{logical; return the tree in compact representation?}
-
-\item{retimes}{logical; return the reassortment times?}
 
 \item{tree}{character; tree representation in Newick format.}
 

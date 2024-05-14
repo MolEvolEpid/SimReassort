@@ -46,10 +46,6 @@ getInfo <- function (
     tree = FALSE, compact = TRUE)
 {
   x <- switch(
-    # SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
-    #            SEXP T0, SEXP Time, SEXP Descript,
-    #            SEXP Yaml, SEXP Structure, SEXP Lineages,
-    #            SEXP Tree, SEXP Compact) {
     paste0("model",as.character(attr(object,"model"))),
     modelLBDPwr = .Call(P_infoLBDPwr2,object,prune,obscure,hide,t0,time,
                         description,yaml,structure,lineages,tree,compact),

@@ -12,7 +12,6 @@ getInfo(
   t0 = FALSE,
   time = FALSE,
   description = FALSE,
-  retimes = FALSE,
   structure = FALSE,
   yaml = FALSE,
   lineages = FALSE,
@@ -35,8 +34,6 @@ getInfo(
 
 \item{description}{logical; return the description?}
 
-\item{retimes}{logical; return the reassortment times?}
-
 \item{structure}{logical; return the structure in \R list format?}
 
 \item{yaml}{logical; return the structure in YAML format?}
@@ -57,7 +54,6 @@ A list containing the requested elements, including any or all of:
   \item{yaml}{the state of the genealogy process in YAML format}
   \item{structure}{the state of the genealogy process in \R list format}
   \item{lineages}{a \code{\link[tibble]{tibble}} containing the lineage count function through time}
-  \item{retimes}{a \code{\link[tibble]{tibble}} containing reassortment times}
 }
 }
 \description{

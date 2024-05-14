@@ -26,6 +26,7 @@ NULL
 ##' @method plot gpsim
 ##' @rdname plot
 ##' @importFrom cowplot plot_grid
+##' @importFrom dplyr if_else
 ##' @export
 plot.gpsim <- function (
   x, ..., time, t0,

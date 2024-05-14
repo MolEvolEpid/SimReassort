@@ -32,7 +32,7 @@ template <class TYPE>
 SEXP yaml (const TYPE& X) {
   SEXP out;
   size_t extra = 0;
-  if (X.nseg > 1) extra += 2;
+  if (X.nseg > 1) extra++;
   PROTECT(out = NEW_CHARACTER(X.nseg+extra));
   for (name_t s = 0; s < X.nseg + extra; s++) SET_STRING_ELT(out,s,mkChar(X.yaml(" ", s).c_str()));
   UNPROTECT(1);
@@ -44,7 +44,7 @@ template <class TYPE>
 SEXP describe (const TYPE& X) {
   SEXP out;
   size_t extra = 0;
-  if (X.nseg > 1) extra += 2;
+  if (X.nseg > 1) extra++;
   PROTECT(out = NEW_CHARACTER(X.nseg + extra));
   for (name_t s = 0; s < X.nseg + extra; s++) SET_STRING_ELT(out,s,mkChar(X.describe(s).c_str()));
   UNPROTECT(1);
@@ -56,7 +56,7 @@ template <class TYPE>
 SEXP structure (const TYPE& G) {
   SEXP out;
   size_t extra = 0;
-  if (G.nseg > 1) extra += 2;
+  if (G.nseg > 1) extra++;
   PROTECT(out = NEW_LIST(G.nseg + extra));
   for (name_t s = 0; s < G.nseg + extra; s++) SET_VECTOR_ELT(out, s, G.structure(s));
   UNPROTECT(1);
@@ -68,7 +68,7 @@ template <class TYPE>
 SEXP newick (const TYPE& X, bool compact = true) {
   SEXP out;
   size_t extra = 0;
-  if (X.nseg > 1) extra += 2;
+  if (X.nseg > 1) extra++;
   PROTECT(out = NEW_CHARACTER(X.nseg + extra));
   for (name_t s = 0; s < X.nseg + extra; s++) SET_STRING_ELT(out,s,mkChar(X.newick(compact,s).c_str()));
   UNPROTECT(1);
@@ -126,7 +126,7 @@ template <class TYPE>
 SEXP lineage_count (const TYPE& G) {
   SEXP out;
   size_t extra = 0;
-  if (G.nseg > 1) extra += 2;
+  if (G.nseg > 1) extra++;
   PROTECT(out = NEW_LIST(G.nseg + extra));
   for (name_t s = 0; s < G.nseg + extra; s++) SET_VECTOR_ELT(out, s, G.lineage_count(s));
   UNPROTECT(1);
@@ -146,7 +146,7 @@ SEXP info (SEXP State, SEXP Prune, SEXP Obscure, SEXP Hide,
   bool do_obscure = *LOGICAL(AS_LOGICAL(Obscure));
   bool do_hide = *LOGICAL(AS_LOGICAL(Hide));
   size_t extra = 0;
-  if (A.nseg > 1)  extra += 2;
+  if (A.nseg > 1)  extra++;
   if (do_prune) {
     for (name_t s = 0; s < A.nseg + extra; s++)   A.geneal[s].prune();
   }

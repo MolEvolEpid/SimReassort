@@ -15,7 +15,6 @@ runLBDPwr(
   psi = 1,
   rhoA = 0,
   rhoB = 0,
-  frac = 0,
   n0 = 5
 )
 
@@ -26,8 +25,7 @@ continueLBDPwr(
   mu = NA,
   psi = NA,
   rhoA = NA,
-  rhoB = NA,
-  frac = NA
+  rhoB = NA
 )
 }
 \arguments{
@@ -44,8 +42,6 @@ continueLBDPwr(
 \item{rhoA}{per capita reassortment rate for segment A}
 
 \item{rhoB}{per capita reassortment rate for segment B}
-
-\item{frac}{fraction of batch sampling}
 
 \item{n0}{initial population size}
 
