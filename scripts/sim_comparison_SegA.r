@@ -26,14 +26,14 @@ if (!dir.exists(current.path)) dir.create(current.path)
 setwd(current.path)
 
 nsamp <- 50
-nrep <- 120
+nrep <- 100
 n.cpus <- as.numeric(Sys.getenv("SLURM_CPUS_PER_TASK"))
 print(paste0("Number of cpus used: ",n.cpus))
 
 params <- c(lambda=5,mu=4.75,psi=.25,rhoA=.2,rhoB=0,rhoAB=0,n0=1)
 
 registerDoParallel(cores=n.cpus)
-foreach(task.no=1:nrep, .combine=rbind, .packages=c("SimReassort","dplyr","stringr","ape"),
+foreach(task.no=seq_len(nrep), .combine=rbind, .packages=c("SimReassort","dplyr","stringr","ape"),
         .errorhandling="remove") %dopar% {
           
   ##################################################################

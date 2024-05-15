@@ -36,7 +36,7 @@ print(paste0("Number of cpus used: ",n.cpus))
 params <- c(lambda=5,mu=4.75,psi=.25,rhoA=.12,rhoB=.08,rhoAB=0,n0=1)
 
 registerDoParallel(cores=n.cpus)
-foreach(task.no=101:120, .combine=rbind, .packages=c("SimReassort","dplyr","stringr","ape"),
+foreach(task.no=seq_len(nrep), .combine=rbind, .packages=c("SimReassort","dplyr","stringr","ape"),
         .errorhandling="remove") %dopar% {
         
   ##################################################################
