@@ -27,3 +27,5 @@ A list of packages are required: `ggtree`, `ggplot2`, `ape`, `dplyr`, `tibble`, 
 install.packages("devtools")
 devtools::install_github("MolEvolEpid/SimReassort")
 ```
+
+However, since the package depends on `C/C++` compilation, Windows users need to download and install `RTools` from CRAN before installing the package. 
